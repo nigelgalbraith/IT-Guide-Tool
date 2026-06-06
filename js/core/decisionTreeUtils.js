@@ -95,11 +95,15 @@ function buildNodeDeclaration(id, key, node) {
 
 
 /** Builds Mermaid flowchart syntax from decision tree data */
-export function buildDecisionTreeMermaid(guide) {
+export function buildDecisionTreeMermaid(guide, mode) {
+  const isPrint = mode === "print";
   const nodes = guide && guide.nodes ? guide.nodes : {};
   const nodeIds = buildNodeIdMap(nodes);
+  const screenInit = "%%{init: {\"theme\": \"base\", \"flowchart\": {\"htmlLabels\": true, \"nodeSpacing\": 70, \"rankSpacing\": 90, \"curve\": \"basis\", \"wrappingWidth\": 180}, \"themeVariables\": {\"darkMode\": true, \"background\": \"#111827\", \"primaryColor\": \"#1a2232\", \"primaryTextColor\": \"#ffffff\", \"primaryBorderColor\": \"#1f2937\", \"edgeLabelBackground\": \"#111827\", \"lineColor\": \"#64748b\", \"textColor\": \"#e5e7eb\", \"fontFamily\": \"system-ui, sans-serif\"}}}%%";
+  const printInit = "%%{init: {\"theme\": \"base\", \"flowchart\": {\"htmlLabels\": true, \"nodeSpacing\": 70, \"rankSpacing\": 90, \"curve\": \"basis\", \"wrappingWidth\": 180}, \"themeVariables\": {\"background\": \"#ffffff\", \"primaryColor\": \"#ffffff\", \"primaryTextColor\": \"#111111\", \"primaryBorderColor\": \"#444444\", \"edgeLabelBackground\": \"#ffffff\", \"lineColor\": \"#444444\", \"textColor\": \"#111111\", \"fontFamily\": \"system-ui, sans-serif\"}}}%%";
   const lines = [
-"%%{init: {\"theme\": \"base\", \"flowchart\": {\"htmlLabels\": true, \"nodeSpacing\": 70, \"rankSpacing\": 90, \"curve\": \"basis\", \"wrappingWidth\": 180}, \"themeVariables\": {\"darkMode\": true, \"background\": \"#111827\", \"primaryColor\": \"#1a2232\", \"primaryTextColor\": \"#ffffff\", \"primaryBorderColor\": \"#1f2937\", \"edgeLabelBackground\": \"#111827\", \"lineColor\": \"#64748b\", \"textColor\": \"#e5e7eb\", \"fontFamily\": \"system-ui, sans-serif\"}}}%%",    "flowchart TD"
+    isPrint ? printInit : screenInit,
+    "flowchart TD"
   ];
   let hasResolvedEnd = false;
   let hasFailEnd = false;
@@ -134,9 +138,15 @@ export function buildDecisionTreeMermaid(guide) {
   if (guide && guide.startNode && nodeIds[guide.startNode]) {
     lines.push("  class " + nodeIds[guide.startNode] + " startNode");
   }
-  lines.push("  classDef normal fill:#1a2232,stroke:#334155,color:#ffffff,stroke-width:1px");
-  lines.push("  classDef success fill:#15803d,stroke:#16a34a,color:#ffffff,stroke-width:2px");
-  lines.push("  classDef fail fill:#b91c1c,stroke:#dc2626,color:#ffffff,stroke-width:2px");
+  if (isPrint) {
+    lines.push("  classDef normal fill:#ffffff,stroke:#444444,color:#111111,stroke-width:1px");
+    lines.push("  classDef success fill:#ffffff,stroke:#15803d,color:#111111,stroke-width:2px");
+    lines.push("  classDef fail fill:#ffffff,stroke:#b91c1c,color:#111111,stroke-width:2px");
+  } else {
+    lines.push("  classDef normal fill:#1a2232,stroke:#334155,color:#ffffff,stroke-width:1px");
+    lines.push("  classDef success fill:#15803d,stroke:#16a34a,color:#ffffff,stroke-width:2px");
+    lines.push("  classDef fail fill:#b91c1c,stroke:#dc2626,color:#ffffff,stroke-width:2px");
+  }
   lines.push("  classDef startNode stroke-width:3px");
   return lines.join("\n");
 }
@@ -187,7 +197,7 @@ function buildInstructionsHtml(guide) {
 /** Builds a complete printable guide document */
 export function buildPrintableGuideHtml(guide) {
   const title = guide && guide.title ? guide.title : "IT How-To Guide";
-  const mermaidDefinition = buildDecisionTreeMermaid(guide);
+  const mermaidDefinition = buildDecisionTreeMermaid(guide, "print");
   return [
     "<!doctype html>",
     "<html lang=\"en\">",
