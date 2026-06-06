@@ -14,10 +14,10 @@ function getPageKey() {
 async function initApp() {
   const page = getPageKey();
   if (page === "guide") {
-    initGuidePage();
+    await initGuidePage();
     return;
   }
-  initHomePage();
+  await initHomePage();
 }
 
 initApp();

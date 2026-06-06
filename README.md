@@ -122,14 +122,13 @@ js/
 │   ├── DecisionTreePane.js
 │   ├── DecisionTreeDiagramPane.js
 │   └── DecisionTreePrintPane.js
-└── data/
-    ├── intro.js
-    ├── introCards.js
-    └── guides/
-        ├── internetIssues.js
-        ├── emailIssues.js
-        ├── printerIssues.js
-        └── index.js
+
+data/
+├── guides.json
+└── guides/
+    ├── internet.json
+    ├── email.json
+    └── printer.json
 ```
 
 ---
@@ -141,50 +140,46 @@ js/
 Create a file in:
 
 ```text
-js/data/guides/
+data/guides/
 ```
 
 Example:
 
-```javascript
-window.passwordResetGuide = {
-  title: "Password Reset",
-  startNode: "checkAccount",
-  nodes: {
-    checkAccount: {
-      title: "Can you access the account?",
-      body: [
+```json
+{
+  "id": "passwordReset",
+  "title": "Password Reset",
+  "description": "Troubleshoot password reset and sign-in problems.",
+  "icon": "",
+  "intro": "<p>Work through common password reset checks.</p>",
+  "startNode": "checkAccount",
+  "nodes": {
+    "checkAccount": {
+      "title": "Can you access the account?",
+      "body": [
         "Attempt to log in using your current password."
       ],
-      successLabel: "Yes",
-      failLabel: "No",
-      successNext: "resolved",
-      failNext: "resetPassword"
+      "successLabel": "Yes",
+      "failLabel": "No",
+      "successNext": "resolved",
+      "failNext": "resetPassword"
     }
   }
-};
+}
 ```
 
 ### Register the Guide
 
-Add it to:
+Add one entry to `data/guides.json`:
 
-```javascript
-window.guides = {
-  internetIssues: window.internetIssuesGuide,
-  emailIssues: window.emailIssuesGuide,
-  printerIssues: window.printerIssuesGuide,
-  passwordReset: window.passwordResetGuide
-};
+```json
+{
+  "id": "passwordReset",
+  "path": "guides/passwordReset.json"
+}
 ```
 
-### Add a Home Page Card
-
-Add a new card entry in:
-
-```text
-js/data/introCards.js
-```
+The home page card is built from the guide JSON `title` and `description`.
 
 The guide will automatically work with:
 

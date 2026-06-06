@@ -99,8 +99,26 @@ export function buildDecisionTreeMermaid(guide, mode) {
   const isPrint = mode === "print";
   const nodes = guide && guide.nodes ? guide.nodes : {};
   const nodeIds = buildNodeIdMap(nodes);
-  const screenInit = "%%{init: {\"theme\": \"base\", \"flowchart\": {\"htmlLabels\": true, \"nodeSpacing\": 70, \"rankSpacing\": 90, \"curve\": \"basis\", \"wrappingWidth\": 180}, \"themeVariables\": {\"darkMode\": true, \"background\": \"#111827\", \"primaryColor\": \"#1a2232\", \"primaryTextColor\": \"#ffffff\", \"primaryBorderColor\": \"#1f2937\", \"edgeLabelBackground\": \"#111827\", \"lineColor\": \"#64748b\", \"textColor\": \"#e5e7eb\", \"fontFamily\": \"system-ui, sans-serif\"}}}%%";
-  const printInit = "%%{init: {\"theme\": \"base\", \"flowchart\": {\"htmlLabels\": true, \"nodeSpacing\": 70, \"rankSpacing\": 90, \"curve\": \"basis\", \"wrappingWidth\": 180}, \"themeVariables\": {\"background\": \"#ffffff\", \"primaryColor\": \"#ffffff\", \"primaryTextColor\": \"#111111\", \"primaryBorderColor\": \"#444444\", \"edgeLabelBackground\": \"#ffffff\", \"lineColor\": \"#444444\", \"textColor\": \"#111111\", \"fontFamily\": \"system-ui, sans-serif\"}}}%%";
+  const screenInit =
+  `%%{init: {
+    "flowchart": {
+      "htmlLabels": true,
+      "nodeSpacing": 70,
+      "rankSpacing": 90,
+      "curve": "basis",
+      "wrappingWidth": 180
+    }
+  }}%%`;  
+  const printInit = 
+  `%%{init: {
+    "flowchart": {
+      "htmlLabels": true,
+      "nodeSpacing": 70,
+      "rankSpacing": 90,
+      "curve": "basis",
+      "wrappingWidth": 180
+    }
+  }}%%`;
   const lines = [
     isPrint ? printInit : screenInit,
     "flowchart TD"
@@ -138,16 +156,6 @@ export function buildDecisionTreeMermaid(guide, mode) {
   if (guide && guide.startNode && nodeIds[guide.startNode]) {
     lines.push("  class " + nodeIds[guide.startNode] + " startNode");
   }
-  if (isPrint) {
-    lines.push("  classDef normal fill:#ffffff,stroke:#444444,color:#111111,stroke-width:1px");
-    lines.push("  classDef success fill:#ffffff,stroke:#15803d,color:#111111,stroke-width:2px");
-    lines.push("  classDef fail fill:#ffffff,stroke:#b91c1c,color:#111111,stroke-width:2px");
-  } else {
-    lines.push("  classDef normal fill:#1a2232,stroke:#334155,color:#ffffff,stroke-width:1px");
-    lines.push("  classDef success fill:#15803d,stroke:#16a34a,color:#ffffff,stroke-width:2px");
-    lines.push("  classDef fail fill:#b91c1c,stroke:#dc2626,color:#ffffff,stroke-width:2px");
-  }
-  lines.push("  classDef startNode stroke-width:3px");
   return lines.join("\n");
 }
 
@@ -221,6 +229,9 @@ export function buildPrintableGuideHtml(guide) {
     ".print-diagram{page-break-before:always;break-before:page;margin-top:0;overflow:hidden;}",
     "#printDiagram{width:100%;height:235mm;overflow:hidden;display:flex;align-items:flex-start;justify-content:center;}",
     "#printDiagram svg{display:block;width:100%;max-width:100%;max-height:235mm;height:auto;}",
+    "#printDiagram .edgeLabel,#printDiagram .edgeLabel span,#printDiagram span.edgeLabel,#printDiagram .edgeLabel foreignObject,#printDiagram .edgeLabel div,#printDiagram .edgeLabel p{opacity:1!important;visibility:visible!important;color:#111!important;}",
+    "#printDiagram .edgeLabel p,#printDiagram .edgeLabel text,#printDiagram .edgeLabel tspan{color:#111!important;fill:#111!important;}",
+    "#printDiagram .edgeLabel rect,#printDiagram .labelBkg{fill:transparent!important;stroke:none!important;}",
     ".print-fallback{white-space:pre-wrap;border:1px solid #bbb;padding:4mm;font-size:9pt;}",
     "@page{size:A4;margin:12mm;}",
     "@media print{.print-page{max-width:none;padding:0;}body{background:#fff;color:#111;}}",
@@ -256,7 +267,7 @@ export function buildPrintableGuideHtml(guide) {
     "svg.setAttribute('viewBox',svgBox.x+' '+svgBox.y+' '+svgBox.width+' '+svgBox.height);",
     "}",
     "if(window.mermaid&&window.mermaid.render){",
-    "mermaid.initialize({startOnLoad:false,theme:'default'});",
+    "mermaid.initialize({startOnLoad:false});",
     "mermaid.render('printDecisionTreeDiagram',mermaidDefinition).then(function(result){",
     "document.getElementById('printDiagram').innerHTML=result.svg;",
     "fallback.remove();",

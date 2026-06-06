@@ -232,6 +232,89 @@ h1 {
   padding: 0.5rem;
 }
 
+.mermaid svg {
+  font-family: system-ui, sans-serif !important;
+}
+
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon,
+.mermaid .node path {
+  fill: var(--surface-raised) !important;
+  stroke: var(--border) !important;
+  color: var(--text-strong) !important;
+}
+
+.mermaid .node .label,
+.mermaid .node .label span,
+.mermaid .node .label div,
+.mermaid .node .label p,
+.mermaid .node text,
+.mermaid .node tspan {
+  color: var(--text-strong) !important;
+  fill: var(--text-strong) !important;
+}
+
+.mermaid .edgePath .path,
+.mermaid .flowchart-link {
+  stroke: var(--text-soft) !important;
+}
+
+.mermaid .marker,
+.mermaid marker path,
+.mermaid marker polygon,
+.mermaid marker circle {
+  fill: var(--text-soft) !important;
+  stroke: var(--text-soft) !important;
+}
+
+.mermaid .normal > * {
+  stroke-width: 1px !important;
+}
+
+.mermaid .success > * {
+  fill: var(--surface-raised) !important;
+  stroke: var(--button-success-hover) !important;
+  stroke-width: 2px !important;
+}
+
+.mermaid .fail > * {
+  fill: var(--surface-raised) !important;
+  stroke: var(--button-fail-hover) !important;
+  stroke-width: 2px !important;
+}
+
+.mermaid .startNode > * {
+  stroke-width: 3px !important;
+}
+
+.mermaid .edgeLabel,
+.mermaid .edgeLabel span,
+.mermaid span.edgeLabel,
+.mermaid .edgeLabel foreignObject,
+.mermaid .edgeLabel div,
+.mermaid .edgeLabel p {
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: var(--text-strong) !important;
+  background: var(--surface) !important;
+}
+
+.mermaid .edgeLabel p,
+.mermaid .edgeLabel text,
+.mermaid .edgeLabel tspan {
+  color: var(--text-strong) !important;
+  fill: var(--text-strong) !important;
+  background: transparent !important;
+}
+
+.mermaid .edgeLabel rect,
+.mermaid .labelBkg {
+  fill: transparent !important;
+  stroke: none !important;
+}
+
 .pane-host--decision-tree-diagram .dt-diagram-error {
   padding: 0.75rem 0.9rem;
   border: 1px solid var(--border);

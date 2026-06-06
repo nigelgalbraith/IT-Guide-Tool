@@ -1,0 +1,16 @@
+{
+  "guides": [
+    {
+      "id": "internet",
+      "path": "guides/internet.json"
+    },
+    {
+      "id": "email",
+      "path": "guides/email.json"
+    },
+    {
+      "id": "printer",
+      "path": "guides/printer.json"
+    }
+  ]
+}

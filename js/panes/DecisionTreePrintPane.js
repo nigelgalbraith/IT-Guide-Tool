@@ -12,13 +12,6 @@ import { buildPrintableGuideHtml } from "../core/decisionTreeUtils.js";
 const PRINT_CLASS = "pane-host--decision-tree-print";
 
 // BUILD
-/** Finds the configured guide */
-function getDecisionTree(guideId) {
-  if (!window.guides || !guideId) return null;
-  return window.guides[guideId] || null;
-}
-
-
 /** Opens the printable guide in a clean print window */
 function openPrintWindow(guide) {
   const printWindow = window.open("", "_blank");
@@ -32,7 +25,7 @@ function openPrintWindow(guide) {
 
 /** Initializes the decision tree print pane */
 function initDecisionTreePrintPane(host, settings) {
-  const decisionTree = getDecisionTree(settings.guideKey || "");
+  const decisionTree = settings.guide || null;
   clearHost(host);
   renderHostTitle(host, settings.title || "Printable Guide", "dt-print-title");
   if (!decisionTree) {

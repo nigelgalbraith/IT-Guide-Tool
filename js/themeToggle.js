@@ -4,6 +4,7 @@ const THEME_LIGHT = "light";
 const THEME_DARK = "dark";
 const TOGGLE_SELECTOR = ".theme-toggle";
 const ICON_SELECTOR = ".theme-toggle-icon";
+const THEME_EVENT = "app:themechange";
 
 // BUILD
 /** Applies a theme to the current document */
@@ -18,6 +19,9 @@ function applyTheme(theme, rootDoc) {
   btn.setAttribute("aria-pressed", String(isLight));
   const icon = btn.querySelector(ICON_SELECTOR);
   if (icon) icon.textContent = isLight ? "☀" : "☾";
+  window.dispatchEvent(new CustomEvent(THEME_EVENT, {
+    detail: { theme, isDarkMode: theme === THEME_DARK }
+  }));
 }
 
 

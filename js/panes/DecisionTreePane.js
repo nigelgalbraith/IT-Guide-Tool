@@ -12,13 +12,6 @@ import { getBranchLabel } from "../core/decisionTreeUtils.js";
 const DECISION_TREE_CLASS = "pane-host--decision-tree";
 
 // BUILD
-/** Finds the configured guide */
-function getDecisionTree(guideId) {
-  if (!window.guides || !guideId) return null;
-  return window.guides[guideId] || null;
-}
-
-
 /** Gets the configured node by id */
 function getNode(decisionTree, nodeId) {
   if (!decisionTree || !decisionTree.nodes || !nodeId) return null;
@@ -94,7 +87,7 @@ function renderNode(host, node, history, onBack, onSuccess, onFail) {
 
 /** Initializes the decision tree pane */
 function initDecisionTreePane(host, settings) {
-  const decisionTree = getDecisionTree(settings.guideKey || "");
+  const decisionTree = settings.guide || null;
   let cleanup = null;
   let currentNodeId = "";
   const history = [];

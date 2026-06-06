@@ -6,32 +6,19 @@ import {
   renderHostTitle
 } from "../core/helpers.js";
 import { buildDecisionTreeMermaid } from "../core/decisionTreeUtils.js";
+import { renderMermaidElement } from "../core/mermaidLoader.js";
 
 // STATE
 const DIAGRAM_CLASS = "pane-host--decision-tree-diagram";
-let renderCount = 0;
 
 // BUILD
-/** Finds the configured guide */
-function getDecisionTree(guideId) {
-  if (!window.guides || !guideId) return null;
-  return window.guides[guideId] || null;
-}
-
-
 /** Renders Mermaid syntax into the diagram host */
 function renderMermaid(host, syntax) {
-  if (!window.mermaid || !window.mermaid.render) {
-    renderHostMessage(host, "Mermaid is not loaded.", "dt-diagram-error", false);
-    return;
-  }
   const diagram = document.createElement("div");
-  diagram.className = "dt-diagram-canvas";
+  diagram.className = "mermaid dt-diagram-canvas";
+  diagram.textContent = syntax;
   host.appendChild(diagram);
-  renderCount += 1;
-  window.mermaid.render("decision-tree-diagram-" + renderCount, syntax).then(function (result) {
-    diagram.innerHTML = result.svg;
-  }).catch(function () {
+  renderMermaidElement(diagram).catch(function () {
     renderHostMessage(host, "Unable to render decision tree diagram.", "dt-diagram-error", false);
   });
 }
@@ -39,7 +26,7 @@ function renderMermaid(host, syntax) {
 
 /** Initializes the decision tree diagram pane */
 function initDecisionTreeDiagramPane(host, settings) {
-  const decisionTree = getDecisionTree(settings.guideKey || "");
+  const decisionTree = settings.guide || null;
   clearHost(host);
   renderHostTitle(host, settings.title || "Guide Flowchart", "dt-diagram-title");
   if (!decisionTree) {
