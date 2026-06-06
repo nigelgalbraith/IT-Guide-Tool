@@ -170,9 +170,9 @@ export function getGuideNodeOrder(guide) {
 }
 
 
-/** Builds printable instructions HTML */
+/** Builds printable reference HTML */
 function buildInstructionsHtml(guide) {
-  return getGuideNodeOrder(guide).map(function (nodeId) {
+  return getGuideNodeOrder(guide).map(function (nodeId, index) {
     const node = guide.nodes[nodeId] || {};
     const body = Array.isArray(node.body) ? node.body : [];
     const bodyHtml = body.map(function (item) {
@@ -182,7 +182,7 @@ function buildInstructionsHtml(guide) {
     const failTitle = node.failNext === null ? "End" : getNodeTitle(guide, node.failNext);
     const successLabel = getBranchLabel(node, "success");
     const failLabel = getBranchLabel(node, "fail");
-    return [
+    const sectionHtml = [
       "<section class=\"print-node\">",
       "<h3>" + escapeHTML(getNodeTitle(guide, nodeId)) + "</h3>",
       "<ul>" + bodyHtml + "</ul>",
@@ -190,6 +190,8 @@ function buildInstructionsHtml(guide) {
       "<p class=\"print-branch\"><strong>" + escapeHTML(failLabel) + ":</strong> " + escapeHTML(failTitle) + "</p>",
       "</section>"
     ].join("");
+    if (index === 0) return sectionHtml;
+    return "<hr class=\"print-node-divider\">" + sectionHtml;
   }).join("");
 }
 
@@ -209,15 +211,16 @@ export function buildPrintableGuideHtml(guide) {
     "body{margin:0;background:#fff;color:#111;font-family:Arial,sans-serif;line-height:1.45;}",
     ".print-page{max-width:190mm;margin:0 auto;padding:16mm;}",
     "h1{margin:0 0 10mm;text-align:center;font-size:22pt;}",
-    "h2{margin:10mm 0 4mm;font-size:15pt;border-bottom:1px solid #999;padding-bottom:2mm;}",
+    "h2{margin:10mm 0 4mm;font-size:15pt;font-weight:700;text-align:center;border-bottom:3px solid #888;padding-bottom:2mm;}",
     "h3{margin:0 0 3mm;font-size:12pt;}",
     "ul{margin:0 0 3mm 6mm;padding-left:5mm;}",
     "li{margin-bottom:2mm;}",
-    ".print-node{break-inside:avoid;page-break-inside:avoid;margin-bottom:7mm;}",
+    ".print-node{break-inside:avoid;page-break-inside:avoid;margin-bottom:11mm;}",
+    ".print-node-divider{border:0;border-top:2px solid #888;margin:8mm 0;}",
     ".print-branch{margin:1mm 0;font-size:10.5pt;}",
-    ".print-diagram{break-inside:avoid;page-break-inside:avoid;margin-top:6mm;overflow:hidden;}",
-    "#printDiagram{width:100%;}",
-    "#printDiagram svg{max-width:100%;height:auto;}",
+    ".print-diagram{page-break-before:always;break-before:page;margin-top:0;overflow:hidden;}",
+    "#printDiagram{width:100%;height:235mm;overflow:hidden;display:flex;align-items:flex-start;justify-content:center;}",
+    "#printDiagram svg{display:block;width:100%;max-width:100%;max-height:235mm;height:auto;}",
     ".print-fallback{white-space:pre-wrap;border:1px solid #bbb;padding:4mm;font-size:9pt;}",
     "@page{size:A4;margin:12mm;}",
     "@media print{.print-page{max-width:none;padding:0;}body{background:#fff;color:#111;}}",
@@ -226,7 +229,7 @@ export function buildPrintableGuideHtml(guide) {
     "<body>",
     "<main class=\"print-page\">",
     "<h1>" + escapeHTML(title) + "</h1>",
-    "<h2>Instructions</h2>",
+    "<h2>Guide Reference</h2>",
     buildInstructionsHtml(guide),
     "<section class=\"print-diagram\">",
     "<h2>Flowchart</h2>",
@@ -240,11 +243,24 @@ export function buildPrintableGuideHtml(guide) {
     "const fallback=document.getElementById('printFallback');",
     "fallback.textContent=mermaidDefinition;",
     "function printSoon(){setTimeout(function(){window.focus();window.print();},300);}",
+    "function fitDiagramToPage(){",
+    "const box=document.getElementById('printDiagram');",
+    "const svg=box.querySelector('svg');",
+    "if(!svg)return;",
+    "const boxWidth=box.clientWidth;",
+    "const boxHeight=box.clientHeight;",
+    "const svgBox=svg.getBBox();",
+    "const scale=Math.min(boxWidth/svgBox.width,boxHeight/svgBox.height,1);",
+    "svg.setAttribute('width',svgBox.width*scale);",
+    "svg.setAttribute('height',svgBox.height*scale);",
+    "svg.setAttribute('viewBox',svgBox.x+' '+svgBox.y+' '+svgBox.width+' '+svgBox.height);",
+    "}",
     "if(window.mermaid&&window.mermaid.render){",
     "mermaid.initialize({startOnLoad:false,theme:'default'});",
     "mermaid.render('printDecisionTreeDiagram',mermaidDefinition).then(function(result){",
     "document.getElementById('printDiagram').innerHTML=result.svg;",
     "fallback.remove();",
+    "fitDiagramToPage();",
     "printSoon();",
     "}).catch(printSoon);",
     "}else{printSoon();}",
