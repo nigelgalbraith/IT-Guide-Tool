@@ -1,0 +1,108 @@
+// STATE
+window.printerIssuesGuide = {
+  title: "Printer Issues",
+  startNode: "checkPower",
+  nodes: {
+    checkPower: {
+      title: "Check printer power",
+      body: [
+        "Confirm printer is powered on.",
+        "Confirm no warning lights."
+      ],
+      successLabel: "Ready",
+      failLabel: "Not Ready",
+      successNext: "checkConnection",
+      failNext: "fixPower"
+    },
+    fixPower: {
+      title: "Fix power issue",
+      body: [
+        "Check power cable and wall socket.",
+        "Restart printer."
+      ],
+      successLabel: "Fixed",
+      failLabel: "Still Broken",
+      successNext: "checkConnection",
+      failNext: "contactSupport"
+    },
+    checkConnection: {
+      title: "Check printer connection",
+      body: [
+        "Check USB/Wi-Fi/network connection."
+      ],
+      successLabel: "Connected",
+      failLabel: "Not Connected",
+      successNext: "checkQueue",
+      failNext: "reconnectPrinter"
+    },
+    reconnectPrinter: {
+      title: "Reconnect printer",
+      body: [
+        "Reconnect USB or reconnect printer to Wi-Fi."
+      ],
+      successLabel: "Connected",
+      failLabel: "Still Offline",
+      successNext: "checkQueue",
+      failNext: "restartPrinter"
+    },
+    checkQueue: {
+      title: "Check print queue",
+      body: [
+        "Open print queue.",
+        "Cancel stuck jobs.",
+        "Try printing again."
+      ],
+      successLabel: "Printed",
+      failLabel: "Still Failing",
+      successNext: "resolved",
+      failNext: "restartPrinter"
+    },
+    restartPrinter: {
+      title: "Restart printer and computer",
+      body: [
+        "Restart printer and computer."
+      ],
+      successLabel: "Fixed",
+      failLabel: "Still Broken",
+      successNext: "resolved",
+      failNext: "checkInkPaper"
+    },
+    checkInkPaper: {
+      title: "Check supplies and jams",
+      body: [
+        "Check paper, ink/toner, and jams."
+      ],
+      successLabel: "Fixed",
+      failLabel: "Still Broken",
+      successNext: "resolved",
+      failNext: "reinstallPrinter"
+    },
+    reinstallPrinter: {
+      title: "Reinstall printer",
+      body: [
+        "Remove and re-add printer.",
+        "Install latest driver if needed."
+      ],
+      successLabel: "Fixed",
+      failLabel: "Still Broken",
+      successNext: "resolved",
+      failNext: "contactSupport"
+    },
+    contactSupport: {
+      title: "Contact support",
+      body: [
+        "Contact printer support or IT support."
+      ],
+      successNext: null,
+      failNext: null
+    },
+    resolved: {
+      title: "Resolved",
+      body: [
+        "Printer issue resolved."
+      ],
+      successNext: null,
+      failNext: null
+    }
+  }
+};

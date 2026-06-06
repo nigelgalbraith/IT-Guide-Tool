@@ -1,0 +1,61 @@
+// STATE
+window.internetIssuesGuide = {
+  title: "Internet Issues",
+  startNode: "checkConnection",
+  nodes: {
+    checkConnection: {
+      title: "Check Wi-Fi/Ethernet connection",
+      body: [
+        "Confirm the device is connected to the correct Wi-Fi network or that the Ethernet cable is firmly plugged in.",
+        "Reconnect if needed, then try loading a website again."
+      ],
+      successLabel: "Connected",
+      failLabel: "Not Connected",
+      successNext: null,
+      failNext: "restartRouter"
+    },
+    restartRouter: {
+      title: "Restart modem/router",
+      body: [
+        "Turn the modem/router off.",
+        "Wait 30 seconds, then turn it back on.",
+        "Wait for the status lights to settle before testing the connection again."
+      ],
+      successLabel: "Fixed",
+      failLabel: "Still Broken",
+      successNext: null,
+      failNext: "testAnotherDevice"
+    },
+    testAnotherDevice: {
+      title: "Test another device",
+      body: [
+        "Try connecting to the internet from another phone, laptop, or tablet on the same network.",
+        "This helps confirm whether the issue is one device or the whole connection."
+      ],
+      successLabel: "Yes",
+      failLabel: "No",
+      successNext: null,
+      failNext: "checkIspOutage"
+    },
+    checkIspOutage: {
+      title: "Check ISP outage",
+      body: [
+        "Check the internet provider's outage page or service status line.",
+        "If there is an outage, wait for the provider to restore service."
+      ],
+      successLabel: "Outage Found",
+      failLabel: "No Outage",
+      successNext: null,
+      failNext: "contactIsp"
+    },
+    contactIsp: {
+      title: "Escalate/contact ISP",
+      body: [
+        "Contact the internet provider with the troubleshooting already completed.",
+        "Ask them to test the line and confirm whether a technician visit is needed."
+      ],
+      successNext: null,
+      failNext: null
+    }
+  }
+};
