@@ -29,10 +29,23 @@ function getStartNodeId(decisionTree) {
 
 
 /** Renders the completion message */
-function renderEnd(host) {
+function renderEnd(host, onStartOver) {
   clearHost(host);
   renderHostTitle(host, "Completed", "dt-title");
   renderHostMessage(host, "This guide is complete.", "dt-body", false, "p");
+  const actions = el("div", "dt-actions");
+  const startOverButton = document.createElement("button");
+  startOverButton.type = "button";
+  startOverButton.className = "dt-button btn-start-over";
+  startOverButton.textContent = "Start Over";
+  startOverButton.addEventListener("click", onStartOver);
+  actions.appendChild(startOverButton);
+  host.appendChild(actions);
+  return {
+    destroy() {
+      startOverButton.removeEventListener("click", onStartOver);
+    }
+  };
 }
 
 
@@ -108,7 +121,10 @@ function initDecisionTreePane(host, settings) {
     if (cleanup && cleanup.destroy) cleanup.destroy();
     cleanup = null;
     if (!node) {
-      renderEnd(host);
+      cleanup = renderEnd(host, function () {
+        history.length = 0;
+        showNode(getStartNodeId(decisionTree));
+      });
       return;
     }
     currentNodeId = nodeId;

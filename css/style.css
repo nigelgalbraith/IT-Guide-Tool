@@ -544,10 +544,28 @@ button:hover { filter: brightness(1.08); }
   text-align: center;
 }
 
+.intro-card ul {
+  display: inline-block;
+  margin: 0 auto;
+  padding-left: 1.25rem;
+  font-size: 0.95rem;
+  opacity: 0.85;
+  line-height: 1.4rem;
+  color: var(--text-soft);
+  text-align: left;
+}
+
+.intro-card li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+
 .intro-card a,
 .intro-card a:visited {
+  display: block;
   color: inherit !important;
   text-decoration: none !important;
+  text-align: center;
 }
 
 /* =========================

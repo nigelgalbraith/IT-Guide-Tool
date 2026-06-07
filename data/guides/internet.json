@@ -1,7 +1,11 @@
 {
   "id": "internet",
   "title": "Internet Issues",
-  "description": "Troubleshoot common Wi-Fi, Ethernet, router, device, and ISP connection problems.",
+  "cardText": [
+    "Troubleshoot Wi-Fi, Ethernet, router, and device connection problems.",
+    "Check local connection issues before restarting network equipment.",
+    "Escalate possible ISP faults when basic checks do not resolve the issue."
+  ],
   "icon": "",
   "text": [
     "Work through basic checks for a home or small office internet connection.",

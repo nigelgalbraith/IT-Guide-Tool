@@ -1,147 +1,85 @@
 # IT Guide Tool
 
-A lightweight web-based troubleshooting application that uses decision trees to guide users through common IT problems.
+IT Guide Tool is a static IT troubleshooting guide tool built with plain HTML, CSS, and JavaScript.
 
-Instead of presenting long documents or checklists, the application walks users through one decision at a time. Each answer determines the next action, helping users troubleshoot issues in a structured and easy-to-follow way.
+It loads guide JSON files from `data/guides/` and uses the same guide data to drive:
 
-The same guide data is used to generate:
+- the interactive decision-tree screen
+- the Mermaid flowchart view
+- the printable guide / Save PDF view
 
-* Interactive troubleshooting guides
-* Visual flowchart diagrams
-* Printable PDF-friendly documentation
-
-The project is designed as a static website and can be hosted directly on GitHub Pages.
-
----
+There is no backend, build step, framework, or package manager required. The app can be served as static files, including on GitHub Pages.
 
 ## Features
 
-* Decision-tree based troubleshooting
-* Interactive step-by-step workflow
-* Mermaid flowchart generation
-* Printable guide output
-* Dark and light theme support
-* Mobile-friendly design
-* Modular guide structure
-* Static GitHub Pages hosting
-* No frameworks required
+- Static troubleshooting guide app
+- Guide data stored as JSON
+- Interactive Success / Fail decision workflow
+- Terminal and completed states with Start Over controls
+- Mermaid flowchart generation using a local vendored Mermaid bundle
+- Printable guide output with dedicated print CSS
+- Guide data validation before rendering
+- Dark and light theme support
+- Mobile-friendly layout
 
----
+## Current Guides
 
-## Available Guides
+The included guides are:
 
-### Internet Issues
+- `internet` - common Wi-Fi, Ethernet, router, device, and ISP connection problems
+- `email` - webmail, passwords, email app settings, mailbox storage, and provider issues
+- `printer` - printer power, connection, queue, supplies, driver, and support issues
 
-Troubleshoot common internet connectivity problems.
-
-Topics include:
-
-* Connection checks
-* Router and modem restarts
-* Testing additional devices
-* ISP outage checks
-* Escalation to providers
-
-### Email Issues
-
-Troubleshoot common email problems.
-
-Topics include:
-
-* Internet connectivity
-* Webmail access
-* Password verification
-* Mailbox storage limits
-* Email client configuration
-
-### Printer Issues
-
-Troubleshoot common printer problems.
-
-Topics include:
-
-* Power and status checks
-* USB and network connectivity
-* Print queue issues
-* Ink, toner and paper checks
-* Driver reinstallation
-
----
-
-## How It Works
-
-Each guide is stored as a decision tree.
-
-Example:
-
-```text
-Can you browse to a website?
-
-├─ Yes
-│  └─ Issue resolved
-│
-└─ No
-   └─ Restart router
-      │
-      ├─ Fixed
-      │  └─ Issue resolved
-      │
-      └─ Still broken
-         └─ Test another device
-```
-
-Each node contains:
-
-* A title
-* Instructions
-* Optional button labels
-* A success path
-* A failure path
-
-The application automatically generates the user interface, flowchart, and printable guide from the same data.
-
----
+Guide entries are registered in `data/guides.json`.
 
 ## Project Structure
 
 ```text
 index.html
+README.md
+LICENSE
 
 css/
-└── style.css
-
-js/
-├── app.js
-├── core/
-│   └── decisionTreeUtils.js
-├── pages/
-│   ├── homePage.js
-│   └── guidePage.js
-├── panes/
-│   ├── IntroPane.js
-│   ├── DecisionTreePane.js
-│   ├── DecisionTreeDiagramPane.js
-│   └── DecisionTreePrintPane.js
+├── style.css
+└── print.css
 
 data/
 ├── guides.json
 └── guides/
-    ├── internet.json
     ├── email.json
+    ├── internet.json
     └── printer.json
+
+js/
+├── app.js
+├── themeToggle.js
+├── core/
+│   ├── appShell.js
+│   ├── decisionTreeUtils.js
+│   ├── eventBus.js
+│   ├── guideData.js
+│   ├── guideValidation.js
+│   ├── helpers.js
+│   ├── mermaidLoader.js
+│   ├── pageLifecycle.js
+│   ├── pageRuntime.js
+│   └── sharedState.js
+├── pages/
+│   ├── guidePage.js
+│   └── homePage.js
+├── panes/
+│   ├── DecisionTreeDiagramPane.js
+│   ├── DecisionTreePane.js
+│   ├── DecisionTreePrintPane.js
+│   ├── IntroCardPane.js
+│   └── IntroPane.js
+└── vendor/
+    └── mermaid.min.js
 ```
 
----
+## Guide Data
 
-## Adding a New Guide
-
-### Create a Guide File
-
-Create a file in:
-
-```text
-data/guides/
-```
+Each guide JSON file defines metadata, intro text, a start node, and a `nodes` object.
 
 Example:
 
@@ -149,9 +87,15 @@ Example:
 {
   "id": "passwordReset",
   "title": "Password Reset",
-  "description": "Troubleshoot password reset and sign-in problems.",
+  "cardText": [
+    "Troubleshoot password reset and sign-in problems.",
+    "Check account access before changing credentials."
+  ],
   "icon": "",
-  "text": "Work through common password reset checks.",
+  "text": [
+    "Work through common password reset checks.",
+    "Confirm account access before resetting credentials."
+  ],
   "startNode": "checkAccount",
   "nodes": {
     "checkAccount": {
@@ -163,14 +107,73 @@ Example:
       "failLabel": "No",
       "successNext": "resolved",
       "failNext": "resetPassword"
+    },
+    "resolved": {
+      "title": "Resolved",
+      "body": [
+        "The account issue is resolved."
+      ],
+      "successNext": null,
+      "failNext": null
     }
   }
 }
 ```
 
-### Register the Guide
+### Text Fields
 
-Add one entry to `data/guides.json`:
+Card `cardText`, intro `text`, and node `body` values are arrays of strings.
+
+Rendering rules:
+
+- `0` items: render nothing
+- `1` item: render as a paragraph
+- `2+` items: render as a bullet list
+
+HTML in guide JSON is not supported.
+
+### Decision Nodes
+
+Each node should include:
+
+- `title`
+- `body`
+- `successNext`
+- `failNext`
+
+Optional fields:
+
+- `successLabel`
+- `failLabel`
+- `type`
+
+A node is terminal when either:
+
+- `type` is `"terminal"`
+- both `successNext` and `failNext` are `null`
+
+Terminal nodes display their title and body, skip Success / Fail buttons, and show Start Over.
+
+## Rendering Flow
+
+When a guide page loads:
+
+1. `guidePage.js` loads the guide JSON through `guideData.js`.
+2. `guideValidation.js` validates the guide before rendering.
+3. `IntroPane.js` renders the guide intro text.
+4. `DecisionTreePane.js` renders the interactive decision tree.
+5. `DecisionTreeDiagramPane.js` uses `decisionTreeUtils.js` and `mermaidLoader.js` to render the Mermaid diagram.
+6. `DecisionTreePrintPane.js` opens a print window generated by `buildPrintableGuideHtml()`.
+
+The print view uses `css/print.css`. The screen view uses `css/style.css`.
+
+## Adding a Guide
+
+1. Add a JSON file to `data/guides/`.
+2. Add an entry to `data/guides.json`.
+3. Open `index.html` through a static file server and select the guide.
+
+Example `data/guides.json` entry:
 
 ```json
 {
@@ -179,51 +182,16 @@ Add one entry to `data/guides.json`:
 }
 ```
 
-The home page card is built from the guide JSON `title` and `description`.
+## Local Use
 
-The guide will automatically work with:
-
-* DecisionTreePane
-* DecisionTreeDiagramPane
-* DecisionTreePrintPane
-
----
+Because the app fetches JSON files, run it through any static web server rather than opening `index.html` directly from the file system.
 
 ## Technologies
 
-* HTML5
-* CSS3
-* JavaScript (ES6)
-* Mermaid.js
-
-No build process, package manager, backend service, or framework is required.
-
----
-
-## Design Goals
-
-* Keep troubleshooting simple and structured
-* Use decision trees rather than large instruction documents
-* Make guides easy to create and maintain
-* Generate diagrams from guide data automatically
-* Support printable documentation
-* Remain lightweight and easy to host
-
----
-
-## Future Improvements
-
-Potential future enhancements:
-
-* Additional troubleshooting guides
-* Search functionality
-* Guide categories
-* Screenshots and diagrams within guides
-* User-created guides
-* Import/export support
-* Knowledge base integration
-
----
+- HTML
+- CSS
+- JavaScript ES modules
+- Mermaid.js, vendored at `js/vendor/mermaid.min.js`
 
 ## License
 

@@ -1,7 +1,11 @@
 {
   "id": "email",
   "title": "Email Issues",
-  "description": "Troubleshoot webmail, passwords, email app settings, mailbox storage, and provider issues.",
+  "cardText": [
+    "Troubleshoot webmail, password, and email app problems.",
+    "Check mailbox storage and account access issues.",
+    "Escalate provider or IT support issues when needed."
+  ],
   "icon": "",
   "text": [
     "Troubleshoot common email sending, receiving, and login problems.",

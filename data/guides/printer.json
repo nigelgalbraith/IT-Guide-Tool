@@ -1,7 +1,11 @@
 {
   "id": "printer",
   "title": "Printer Issues",
-  "description": "Troubleshoot printer power, connection, queue, supplies, driver, and support issues.",
+  "cardText": [
+    "Troubleshoot printer power, connection, and queue problems.",
+    "Check paper, toner, jams, and printer status issues.",
+    "Reinstall the printer or contact support when needed."
+  ],
   "icon": "",
   "text": [
     "Work through common printer connectivity and printing problems.",

@@ -104,22 +104,8 @@ function buildNodeDeclaration(id, key, node) {
 
 
 /** Builds Mermaid flowchart syntax from decision tree data */
-export function buildDecisionTreeMermaid(guide, mode) {
-  const isPrint = mode === "print";
-  const nodes = guide && guide.nodes ? guide.nodes : {};
-  const nodeIds = buildNodeIdMap(nodes);
-  const screenInit =
-  `%%{init: {
-    "flowchart": {
-      "htmlLabels": true,
-      "nodeSpacing": 70,
-      "rankSpacing": 90,
-      "curve": "basis",
-      "wrappingWidth": 180
-    }
-  }}%%`;  
-  const printInit = 
-  `%%{init: {
+function buildMermaidInit() {
+  return `%%{init: {
     "flowchart": {
       "htmlLabels": true,
       "nodeSpacing": 70,
@@ -128,8 +114,15 @@ export function buildDecisionTreeMermaid(guide, mode) {
       "wrappingWidth": 180
     }
   }}%%`;
+}
+
+
+/** Builds Mermaid flowchart syntax from decision tree data */
+export function buildDecisionTreeMermaid(guide, mode) {
+  const nodes = guide && guide.nodes ? guide.nodes : {};
+  const nodeIds = buildNodeIdMap(nodes);
   const lines = [
-    isPrint ? printInit : screenInit,
+    buildMermaidInit(),
     "flowchart TD"
   ];
   let hasResolvedEnd = false;
@@ -279,6 +272,7 @@ export function buildPrintableGuideHtml(guide) {
     "fallback.hidden=true;",
     "fallback.textContent='';",
     "diagramBox.innerHTML=svgMarkup;",
+    "fitDiagramToPage();",
     "requestAnimationFrame(function(){",
     "requestAnimationFrame(printSoon);",
     "});",

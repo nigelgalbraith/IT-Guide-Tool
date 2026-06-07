@@ -1,17 +1,23 @@
 // IMPORTS
-import { NOOP_PANE, addHostClasses, el, renderHostMessage } from "../core/helpers.js";
+import { NOOP_PANE, addHostClasses, el, renderHostMessage, renderTextArray } from "../core/helpers.js";
 
 // STATE
 const CARDS_CLASS = "intro-card-grid";
 
 // BUILD
+/** Gets card content as text blocks */
+function getCardText(guide) {
+  return Array.isArray(guide.cardText) ? guide.cardText : [];
+}
+
+
 /** Builds one intro card element */
 function buildCard(guide) {
   const card = el("div", "intro-card");
   const link = document.createElement("a");
   link.href = "index.html?page=guide&guide=" + encodeURIComponent(guide.id || "");
   link.appendChild(el("h2", "", guide.title || guide.id || ""));
-  link.appendChild(el("p", "", guide.description || ""));
+  renderTextArray(link, getCardText(guide));
   card.appendChild(link);
   return card;
 }
