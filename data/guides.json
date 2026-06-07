@@ -7,6 +7,10 @@
     {
       "id": "computerNoDisplay",
       "path": "guides/computerNoDisplay.json"
+    },
+    {
+      "id": "computerSlow",
+      "path": "guides/computerSlow.json"
     }
   ]
 }
