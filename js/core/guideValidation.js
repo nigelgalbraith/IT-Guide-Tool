@@ -157,6 +157,12 @@ export function validateGuideData(guide, options) {
       errors.push("Node \"" + nodeId + "\" is missing body.");
     } else if (!Array.isArray(node.body)) {
       errors.push("Node \"" + nodeId + "\" body must be a list.");
+    } else {
+      node.body.forEach(function (item, index) {
+        if (typeof item !== "string") {
+          errors.push("Node \"" + nodeId + "\" body item " + (index + 1) + " must be text.");
+        }
+      });
     }
     validateNextReference(errors, nodes, nodeId, "successNext");
     validateNextReference(errors, nodes, nodeId, "failNext");

@@ -54,7 +54,12 @@ export async function loadGuideWithSource(entry) {
 /** Loads the guide index and all guide JSON files */
 export async function loadAllGuides() {
   const index = await loadGuideIndex();
-  const guides = await Promise.all(index.map(loadGuide));
+  const guides = await Promise.all(index.map(function (entry) {
+    return loadGuide(entry).catch(function (error) {
+      console.warn("Unable to load guide:", getGuidePath(entry), error);
+      return null;
+    });
+  }));
   return guides.filter(Boolean);
 }
 

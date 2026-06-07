@@ -151,7 +151,7 @@ Example:
   "title": "Password Reset",
   "description": "Troubleshoot password reset and sign-in problems.",
   "icon": "",
-  "intro": "<p>Work through common password reset checks.</p>",
+  "text": "Work through common password reset checks.",
   "startNode": "checkAccount",
   "nodes": {
     "checkAccount": {

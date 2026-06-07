@@ -3,7 +3,12 @@
   "title": "Internet Issues",
   "description": "Troubleshoot common Wi-Fi, Ethernet, router, device, and ISP connection problems.",
   "icon": "",
-  "intro": "<p>Work through basic checks for a home or small office internet connection.</p><ul><li>Check the local connection first</li><li>Restart network equipment if needed</li><li>Escalate when the connection still fails</li></ul>",
+  "text": [
+    "Work through basic checks for a home or small office internet connection.",
+    "Check the local connection first.",
+    "Restart network equipment if needed.",
+    "Escalate when the connection still fails."
+  ],
   "startNode": "checkConnection",
   "nodes": {
     "checkConnection": {

@@ -93,7 +93,7 @@ export async function initGuidePage() {
     return;
   }
   const introPane = buildIntroPane({
-    html: guideConfig.intro || "",
+    text: guideConfig.text || "",
     className: "intro-text",
     id: "introHost"
   }, api);

@@ -37,6 +37,10 @@
   font-size: 12pt;
 }
 
+.print-node-body {
+  margin: 0 0 3mm;
+}
+
 .print-node-list {
   margin: 0 0 3mm 6mm;
   padding-left: 5mm;

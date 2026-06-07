@@ -52,7 +52,7 @@ function restoreOriginalSource(element) {
   element.removeAttribute("data-processed");
 }
 
-
+/** Renders one Mermaid element using the active app theme */
 export async function renderMermaidElement(element) {
   const previousVisibility = element.style.visibility;
   element.style.visibility = "hidden";

@@ -3,7 +3,14 @@
   "title": "Printer Issues",
   "description": "Troubleshoot printer power, connection, queue, supplies, driver, and support issues.",
   "icon": "",
-  "intro": "<p>Work through common printer connectivity and printing problems.</p><ul><li>Check power and printer status</li><li>Verify USB, Wi-Fi, or network connectivity</li><li>Clear stuck print jobs</li><li>Check paper, toner, and printer errors</li><li>Reinstall the printer if necessary</li></ul>",
+  "text": [
+    "Work through common printer connectivity and printing problems.",
+    "Check power and printer status.",
+    "Verify USB, Wi-Fi, or network connectivity.",
+    "Clear stuck print jobs.",
+    "Check paper, toner, and printer errors.",
+    "Reinstall the printer if necessary."
+  ],
   "startNode": "checkPower",
   "nodes": {
     "checkPower": {

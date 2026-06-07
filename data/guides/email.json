@@ -3,7 +3,11 @@
   "title": "Email Issues",
   "description": "Troubleshoot webmail, passwords, email app settings, mailbox storage, and provider issues.",
   "icon": "",
-  "intro": "<p>Troubleshoot common email sending, receiving, and login problems.</p><ul><li>Confirm internet connectivity</li><li>Verify account credentials</li><li>Check mailbox settings and storage limits</li><li>Escalate to the email provider if required</li></ul>",
+  "text": [
+    "Troubleshoot common email sending, receiving, and login problems.",
+    "Confirm internet connectivity. Verify account credentials.",
+    "Check mailbox settings and storage limits. Escalate to the email provider if required."
+  ],
   "startNode": "checkInternet",
   "nodes": {
     "checkInternet": {

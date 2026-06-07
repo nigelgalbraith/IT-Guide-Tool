@@ -4,7 +4,8 @@ import {
   clearHost,
   addHostClasses,
   renderHostMessage,
-  renderHostTitle
+  renderHostTitle,
+  renderTextArray
 } from "../core/helpers.js";
 import { getBranchLabel, isTerminalNode } from "../core/decisionTreeUtils.js";
 
@@ -37,15 +38,7 @@ function renderEnd(host) {
 
 /** Renders node body content as plain text */
 function renderNodeBody(host, body) {
-  if (Array.isArray(body)) {
-    const list = el("ul", "dt-body dt-body-list");
-    body.forEach(function (item) {
-      list.appendChild(el("li", "", item));
-    });
-    host.appendChild(list);
-    return list;
-  }
-  return renderHostMessage(host, body || "No instructions configured.", "dt-body", false, "p");
+  return renderTextArray(host, body, "dt-body", "dt-body dt-body-list");
 }
 
 

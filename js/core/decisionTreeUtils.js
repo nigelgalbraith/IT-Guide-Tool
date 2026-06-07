@@ -15,7 +15,10 @@ export function getBranchLabel(node, branch) {
 
 /** Returns whether a node is an explicit terminal node */
 export function isTerminalNode(node) {
-  return Boolean(node && node.type === "terminal");
+  return Boolean(node && (
+    node.type === "terminal" ||
+    (node.successNext === null && node.failNext === null)
+  ));
 }
 
 
@@ -48,7 +51,7 @@ function getMermaidNodeId(key, usedIds) {
 function escapeMermaidLabel(value) {
   return String(value || "")
     .replace(/&/g, "&amp;")
-    .replace(/"/g, "#quot;")
+    .replace(/"/g, "&quot;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/\s+/g, " ")
@@ -187,13 +190,24 @@ export function getGuideNodeOrder(guide) {
 
 
 /** Builds printable reference HTML */
+function buildPrintableBodyHtml(body) {
+  const items = Array.isArray(body) ? body : [];
+  if (!items.length) return "";
+  if (items.length === 1) {
+    return "<p class=\"print-node-body\">" + escapeHTML(items[0]) + "</p>";
+  }
+  const bodyHtml = items.map(function (item) {
+    return "<li>" + escapeHTML(item) + "</li>";
+  }).join("");
+  return "<ul class=\"print-node-list\">" + bodyHtml + "</ul>";
+}
+
+
+/** Builds printable reference HTML */
 function buildInstructionsHtml(guide) {
   return getGuideNodeOrder(guide).map(function (nodeId, index) {
     const node = guide.nodes[nodeId] || {};
-    const body = Array.isArray(node.body) ? node.body : [];
-    const bodyHtml = body.map(function (item) {
-      return "<li>" + escapeHTML(item) + "</li>";
-    }).join("");
+    const bodyHtml = buildPrintableBodyHtml(node.body);
     const successTitle = node.successNext === null ? "Resolved" : getNodeTitle(guide, node.successNext);
     const failTitle = node.failNext === null ? "End" : getNodeTitle(guide, node.failNext);
     const successLabel = getBranchLabel(node, "success");
@@ -205,7 +219,7 @@ function buildInstructionsHtml(guide) {
     const sectionHtml = [
       "<section class=\"print-node\">",
       "<h3 class=\"print-node-title\">" + escapeHTML(getNodeTitle(guide, nodeId)) + "</h3>",
-      "<ul class=\"print-node-list\">" + bodyHtml + "</ul>",
+      bodyHtml,
       branchHtml,
       "</section>"
     ].join("");
