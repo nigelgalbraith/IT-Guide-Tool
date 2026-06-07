@@ -196,7 +196,17 @@ The print view uses `css/print.css`. The screen view uses `css/style.css`.
 
 1. Add a JSON file to `data/guides/`.
 2. Add an entry to `data/guides.json`.
-3. Open `index.html` through a static file server and select the guide.
+3. Start a static web server from the project folder.
+
+   Example:
+
+   python3 -m http.server 8000
+
+4. Open a browser and navigate to:
+
+   http://localhost:8000
+
+5. Select the guide.
 
 Example `data/guides.json` entry:
 

@@ -19,6 +19,34 @@
     {
       "id": "cannotPrint",
       "path": "guides/cannotPrint.json"
+    },
+    {
+      "id": "emailNotWorking",
+      "path": "guides/emailNotWorking.json"
+    },
+    {
+      "id": "windowsUpdateFailed",
+      "path": "guides/windowsUpdateFailed.json"
+    },
+    {
+      "id": "batteryNotCharging",
+      "path": "guides/batteryNotCharging.json"
+    },
+    {
+      "id": "externalMonitorNotDetected",
+      "path": "guides/externalMonitorNotDetected.json"
+    },
+    {
+      "id": "sharedFolderAccess",
+      "path": "guides/sharedFolderAccess.json"
+    },
+    {
+      "id": "audioNotWorking",
+      "path": "guides/audioNotWorking.json"
+    },
+    {
+      "id": "keyboardMouseNotWorking",
+      "path": "guides/keyboardMouseNotWorking.json"
     }
   ]
 }
