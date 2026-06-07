@@ -13,6 +13,12 @@ export function getBranchLabel(node, branch) {
 }
 
 
+/** Returns whether a node is an explicit terminal node */
+export function isTerminalNode(node) {
+  return Boolean(node && node.type === "terminal");
+}
+
+
 /** Escapes a value for safe HTML output */
 function escapeHTML(value) {
   return String(value || "")
@@ -135,6 +141,7 @@ export function buildDecisionTreeMermaid(guide, mode) {
   Object.keys(nodes).forEach(function (key) {
     const node = nodes[key] || {};
     const id = nodeIds[key];
+    if (isTerminalNode(node)) return;
     if (node.successNext === null) {
       hasResolvedEnd = true;
       addEdge(lines, id, getBranchLabel(node, "success"), "RESOLVED");
@@ -169,6 +176,7 @@ export function getGuideNodeOrder(guide) {
     if (!nodeId || visited[nodeId] || !nodes[nodeId]) return;
     visited[nodeId] = true;
     order.push(nodeId);
+    if (isTerminalNode(nodes[nodeId])) return;
     visit(nodes[nodeId].successNext);
     visit(nodes[nodeId].failNext);
   }
@@ -190,12 +198,15 @@ function buildInstructionsHtml(guide) {
     const failTitle = node.failNext === null ? "End" : getNodeTitle(guide, node.failNext);
     const successLabel = getBranchLabel(node, "success");
     const failLabel = getBranchLabel(node, "fail");
+    const branchHtml = isTerminalNode(node) ? "" : [
+      "<p class=\"print-branch\"><strong>" + escapeHTML(successLabel) + ":</strong> " + escapeHTML(successTitle) + "</p>",
+      "<p class=\"print-branch\"><strong>" + escapeHTML(failLabel) + ":</strong> " + escapeHTML(failTitle) + "</p>"
+    ].join("");
     const sectionHtml = [
       "<section class=\"print-node\">",
-      "<h3>" + escapeHTML(getNodeTitle(guide, nodeId)) + "</h3>",
-      "<ul>" + bodyHtml + "</ul>",
-      "<p class=\"print-branch\"><strong>" + escapeHTML(successLabel) + ":</strong> " + escapeHTML(successTitle) + "</p>",
-      "<p class=\"print-branch\"><strong>" + escapeHTML(failLabel) + ":</strong> " + escapeHTML(failTitle) + "</p>",
+      "<h3 class=\"print-node-title\">" + escapeHTML(getNodeTitle(guide, nodeId)) + "</h3>",
+      "<ul class=\"print-node-list\">" + bodyHtml + "</ul>",
+      branchHtml,
       "</section>"
     ].join("");
     if (index === 0) return sectionHtml;
@@ -215,66 +226,57 @@ export function buildPrintableGuideHtml(guide) {
     "<meta charset=\"utf-8\">",
     "<title>" + escapeHTML(title) + "</title>",
     "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
-    "<style>",
-    "body{margin:0;background:#fff;color:#111;font-family:Arial,sans-serif;line-height:1.45;}",
-    ".print-page{max-width:190mm;margin:0 auto;padding:16mm;}",
-    "h1{margin:0 0 10mm;text-align:center;font-size:22pt;}",
-    "h2{margin:10mm 0 4mm;font-size:15pt;font-weight:700;text-align:center;border-bottom:3px solid #888;padding-bottom:2mm;}",
-    "h3{margin:0 0 3mm;font-size:12pt;}",
-    "ul{margin:0 0 3mm 6mm;padding-left:5mm;}",
-    "li{margin-bottom:2mm;}",
-    ".print-node{break-inside:avoid;page-break-inside:avoid;margin-bottom:11mm;}",
-    ".print-node-divider{border:0;border-top:2px solid #888;margin:8mm 0;}",
-    ".print-branch{margin:1mm 0;font-size:10.5pt;}",
-    ".print-diagram{page-break-before:always;break-before:page;margin-top:0;overflow:hidden;}",
-    "#printDiagram{width:100%;height:235mm;overflow:hidden;display:flex;align-items:flex-start;justify-content:center;}",
-    "#printDiagram svg{display:block;width:100%;max-width:100%;max-height:235mm;height:auto;}",
-    "#printDiagram .edgeLabel,#printDiagram .edgeLabel span,#printDiagram span.edgeLabel,#printDiagram .edgeLabel foreignObject,#printDiagram .edgeLabel div,#printDiagram .edgeLabel p{opacity:1!important;visibility:visible!important;color:#111!important;}",
-    "#printDiagram .edgeLabel p,#printDiagram .edgeLabel text,#printDiagram .edgeLabel tspan{color:#111!important;fill:#111!important;}",
-    "#printDiagram .edgeLabel rect,#printDiagram .labelBkg{fill:transparent!important;stroke:none!important;}",
-    ".print-fallback{white-space:pre-wrap;border:1px solid #bbb;padding:4mm;font-size:9pt;}",
-    "@page{size:A4;margin:12mm;}",
-    "@media print{.print-page{max-width:none;padding:0;}body{background:#fff;color:#111;}}",
-    "</style>",
+    "<link rel=\"stylesheet\" href=\"css/print.css\">",
     "</head>",
-    "<body>",
+    "<body class=\"print-document\">",
     "<main class=\"print-page\">",
-    "<h1>" + escapeHTML(title) + "</h1>",
-    "<h2>Guide Reference</h2>",
+    "<h1 class=\"print-title\">" + escapeHTML(title) + "</h1>",
+    "<h2 class=\"print-section-title\">Guide Reference</h2>",
     buildInstructionsHtml(guide),
     "<section class=\"print-diagram\">",
-    "<h2>Flowchart</h2>",
-    "<div id=\"printDiagram\"></div>",
-    "<pre id=\"printFallback\" class=\"print-fallback\"></pre>",
+    "<h2 class=\"print-section-title\">Flowchart</h2>",
+    "<div id=\"printDiagram\" class=\"print-diagram-canvas\"></div>",
+    "<pre id=\"printFallback\" class=\"print-fallback\" hidden></pre>",
     "</section>",
     "</main>",
-    "<script src=\"https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js\"><\/script>",
+    "<script src=\"js/vendor/mermaid.min.js\"><\/script>",
     "<script>",
     "const mermaidDefinition=" + JSON.stringify(mermaidDefinition) + ";",
+    "const diagramBox=document.getElementById('printDiagram');",
     "const fallback=document.getElementById('printFallback');",
-    "fallback.textContent=mermaidDefinition;",
     "function printSoon(){setTimeout(function(){window.focus();window.print();},300);}",
+    "function showRenderError(message){",
+    "fallback.hidden=false;",
+    "fallback.textContent=message;",
+    "}",
     "function fitDiagramToPage(){",
-    "const box=document.getElementById('printDiagram');",
-    "const svg=box.querySelector('svg');",
+    "const svg=diagramBox.querySelector('svg');",
     "if(!svg)return;",
-    "const boxWidth=box.clientWidth;",
-    "const boxHeight=box.clientHeight;",
+    "const boxWidth=diagramBox.clientWidth;",
+    "const boxHeight=diagramBox.clientHeight;",
     "const svgBox=svg.getBBox();",
     "const scale=Math.min(boxWidth/svgBox.width,boxHeight/svgBox.height,1);",
     "svg.setAttribute('width',svgBox.width*scale);",
     "svg.setAttribute('height',svgBox.height*scale);",
     "svg.setAttribute('viewBox',svgBox.x+' '+svgBox.y+' '+svgBox.width+' '+svgBox.height);",
     "}",
+    "function insertRenderedSvg(svgMarkup){",
+    "if(!svgMarkup)throw new Error('Mermaid returned empty SVG.');",
+    "fallback.hidden=true;",
+    "fallback.textContent='';",
+    "diagramBox.innerHTML=svgMarkup;",
+    "requestAnimationFrame(function(){",
+    "requestAnimationFrame(printSoon);",
+    "});",
+    "}",
     "if(window.mermaid&&window.mermaid.render){",
     "mermaid.initialize({startOnLoad:false});",
     "mermaid.render('printDecisionTreeDiagram',mermaidDefinition).then(function(result){",
-    "document.getElementById('printDiagram').innerHTML=result.svg;",
-    "fallback.remove();",
-    "fitDiagramToPage();",
-    "printSoon();",
-    "}).catch(printSoon);",
-    "}else{printSoon();}",
+    "insertRenderedSvg(result.svg);",
+    "}).catch(function(error){",
+    "showRenderError('Unable to render the Mermaid flowchart. Print the guide reference, then retry the flowchart after checking the diagram data.');",
+    "});",
+    "}else{showRenderError('Unable to load Mermaid. The flowchart could not be rendered.');}",
     "<\/script>",
     "</body>",
     "</html>"

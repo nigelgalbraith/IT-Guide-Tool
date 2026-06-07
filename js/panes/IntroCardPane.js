@@ -1,19 +1,19 @@
 // IMPORTS
-import { NOOP_PANE, addHostClasses, renderHostMessage } from "../core/helpers.js";
+import { NOOP_PANE, addHostClasses, el, renderHostMessage } from "../core/helpers.js";
 
 // STATE
 const CARDS_CLASS = "intro-card-grid";
 
 // BUILD
-/** Builds the intro card list HTML */
-function buildCardsHTML(guides) {
-  return guides.map(function (guide) {
-    if (!guide) return "";
-    const title = guide.title || guide.id || "";
-    const desc = guide.description || "";
-    const link = "index.html?page=guide&guide=" + encodeURIComponent(guide.id || "");
-    return '<div class="intro-card"><a href="' + link + '"><h2>' + title + '</h2><p>' + desc + '</p></a></div>';
-  }).join("");
+/** Builds one intro card element */
+function buildCard(guide) {
+  const card = el("div", "intro-card");
+  const link = document.createElement("a");
+  link.href = "index.html?page=guide&guide=" + encodeURIComponent(guide.id || "");
+  link.appendChild(el("h2", "", guide.title || guide.id || ""));
+  link.appendChild(el("p", "", guide.description || ""));
+  card.appendChild(link);
+  return card;
 }
 
 
@@ -24,7 +24,9 @@ function initIntroCardsPane(host, settings) {
     renderHostMessage(host, "No guides configured.", "", true, "p");
     return NOOP_PANE;
   }
-  host.innerHTML = buildCardsHTML(guides);
+  guides.forEach(function (guide) {
+    if (guide) host.appendChild(buildCard(guide));
+  });
   return NOOP_PANE;
 }
 

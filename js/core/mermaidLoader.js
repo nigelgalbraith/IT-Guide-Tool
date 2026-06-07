@@ -1,5 +1,5 @@
 // STATE
-const MERMAID_SRC = "https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js";
+const MERMAID_SRC = "js/vendor/mermaid.min.js";
 const MERMAID_SELECTOR = ".mermaid";
 const SOURCE_ATTR = "data-mermaid-source";
 const THEME_EVENT = "app:themechange";
@@ -53,15 +53,18 @@ function restoreOriginalSource(element) {
 }
 
 
-/** Renders one Mermaid element using the active app theme */
 export async function renderMermaidElement(element) {
+  const previousVisibility = element.style.visibility;
+  element.style.visibility = "hidden";
   restoreOriginalSource(element);
   const mermaid = await loadMermaid();
   if (!mermaid || !mermaid.run) {
+    element.style.visibility = previousVisibility;
     throw new Error("Mermaid is not loaded.");
   }
   initializeMermaid(mermaid);
   await mermaid.run({ nodes: [element] });
+  element.style.visibility = previousVisibility;
   installMermaidThemeListener();
 }
 

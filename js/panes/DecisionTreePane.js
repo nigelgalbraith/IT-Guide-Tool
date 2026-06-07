@@ -6,7 +6,7 @@ import {
   renderHostMessage,
   renderHostTitle
 } from "../core/helpers.js";
-import { getBranchLabel } from "../core/decisionTreeUtils.js";
+import { getBranchLabel, isTerminalNode } from "../core/decisionTreeUtils.js";
 
 // STATE
 const DECISION_TREE_CLASS = "pane-host--decision-tree";
@@ -45,33 +45,48 @@ function renderNodeBody(host, body) {
     host.appendChild(list);
     return list;
   }
-  return renderHostMessage(host, "No instructions configured.", "dt-body", false, "p");
+  return renderHostMessage(host, body || "No instructions configured.", "dt-body", false, "p");
 }
 
 
 /** Renders a decision tree node */
-function renderNode(host, node, history, onBack, onSuccess, onFail) {
+function renderNode(host, node, history, onBack, onSuccess, onFail, onStartOver) {
   clearHost(host);
   renderHostTitle(host, node.title || "Node", "dt-title");
   renderNodeBody(host, node.body);
   const actions = el("div", "dt-actions");
   const backButton = document.createElement("button");
-  const successButton = document.createElement("button");
-  const failButton = document.createElement("button");
   backButton.type = "button";
-  successButton.type = "button";
-  failButton.type = "button";
   backButton.className = "dt-button btn-back";
-  successButton.className = "dt-button btn-success";
-  failButton.className = "dt-button btn-fail";
   backButton.textContent = "Back";
-  successButton.textContent = getBranchLabel(node, "success");
-  failButton.textContent = getBranchLabel(node, "fail");
   backButton.disabled = !history.length;
   backButton.addEventListener("click", onBack);
+  actions.appendChild(backButton);
+  if (isTerminalNode(node)) {
+    const startOverButton = document.createElement("button");
+    startOverButton.type = "button";
+    startOverButton.className = "dt-button btn-start-over";
+    startOverButton.textContent = "Start Over";
+    startOverButton.addEventListener("click", onStartOver);
+    actions.appendChild(startOverButton);
+    host.appendChild(actions);
+    return {
+      destroy() {
+        backButton.removeEventListener("click", onBack);
+        startOverButton.removeEventListener("click", onStartOver);
+      }
+    };
+  }
+  const successButton = document.createElement("button");
+  const failButton = document.createElement("button");
+  successButton.type = "button";
+  failButton.type = "button";
+  successButton.className = "dt-button btn-success";
+  failButton.className = "dt-button btn-fail";
+  successButton.textContent = getBranchLabel(node, "success");
+  failButton.textContent = getBranchLabel(node, "fail");
   successButton.addEventListener("click", onSuccess);
   failButton.addEventListener("click", onFail);
-  actions.appendChild(backButton);
   actions.appendChild(successButton);
   actions.appendChild(failButton);
   host.appendChild(actions);
@@ -113,6 +128,9 @@ function initDecisionTreePane(host, settings) {
     }, function () {
       history.push(currentNodeId);
       showNode(node.failNext);
+    }, function () {
+      history.length = 0;
+      showNode(getStartNodeId(decisionTree));
     });
   }
   showNode(getStartNodeId(decisionTree));

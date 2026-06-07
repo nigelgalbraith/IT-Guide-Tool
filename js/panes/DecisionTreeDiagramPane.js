@@ -14,13 +14,25 @@ const DIAGRAM_CLASS = "pane-host--decision-tree-diagram";
 // BUILD
 /** Renders Mermaid syntax into the diagram host */
 function renderMermaid(host, syntax) {
+  const loading = document.createElement("div");
+  loading.className = "dt-diagram-loading";
+  loading.textContent = "Loading flowchart...";
+  host.appendChild(loading);
   const diagram = document.createElement("div");
   diagram.className = "mermaid dt-diagram-canvas";
+  diagram.hidden = true;
   diagram.textContent = syntax;
   host.appendChild(diagram);
-  renderMermaidElement(diagram).catch(function () {
-    renderHostMessage(host, "Unable to render decision tree diagram.", "dt-diagram-error", false);
-  });
+  renderMermaidElement(diagram)
+    .then(function () {
+      loading.remove();
+      diagram.hidden = false;
+    })
+    .catch(function () {
+      loading.remove();
+      diagram.remove();
+      renderHostMessage(host, "Unable to render decision tree diagram.", "dt-diagram-error", false);
+    });
 }
 
 

@@ -1,6 +1,7 @@
 import { createPageRuntime } from "../core/pageRuntime.js";
-import { titleCase } from "../core/helpers.js";
-import { findGuideEntry, loadGuide, loadGuideIndex } from "../core/guideData.js";
+import { el, titleCase } from "../core/helpers.js";
+import { findGuideEntry, loadGuideIndex, loadGuideWithSource } from "../core/guideData.js";
+import { validateGuideData } from "../core/guideValidation.js";
 import { buildIntroPane } from "../panes/IntroPane.js";
 import { buildDecisionTreePane } from "../panes/DecisionTreePane.js";
 import { buildDecisionTreeDiagramPane } from "../panes/DecisionTreeDiagramPane.js";
@@ -9,8 +10,6 @@ import { buildDecisionTreePrintPane } from "../panes/DecisionTreePrintPane.js";
 // STATE
 const BASE_TITLE = "IT How-To Guide";
 const BACK_NAV_KEY = "home";
-const MISSING_PARAM_HTML = "<p>Missing required URL parameter: <code>?guide=</code></p>";
-const MISSING_GUIDE_HTML = "<p>Guide not found.</p>";
 const GUIDE_STATE_ENTRIES = [["page", "guide"]];
 
 // BUILD
@@ -18,6 +17,38 @@ const GUIDE_STATE_ENTRIES = [["page", "guide"]];
 function getGuideKey() {
   const params = new URLSearchParams(window.location.search);
   return (params.get("guide") || "").trim();
+}
+
+
+/** Builds the shared guide message host */
+function buildGuideMessageHost() {
+  const host = document.createElement("div");
+  host.className = "intro-text";
+  host.id = "introHost";
+  return host;
+}
+
+
+/** Renders the missing guide URL parameter message */
+function renderMissingParamMessage(host) {
+  const paragraph = document.createElement("p");
+  paragraph.appendChild(document.createTextNode("Missing required URL parameter: "));
+  paragraph.appendChild(el("code", "", "?guide="));
+  host.appendChild(paragraph);
+}
+
+
+/** Renders guide validation errors and prevents guide panes from rendering */
+function renderValidationErrors(host, errors) {
+  const pane = el("section", "pane guide-validation-error");
+  pane.appendChild(el("h2", "", "Guide data error"));
+  pane.appendChild(el("p", "", "This guide cannot be displayed because its data has validation errors."));
+  const list = el("ul", "guide-validation-error-list");
+  errors.forEach(function (error) {
+    list.appendChild(el("li", "", error));
+  });
+  pane.appendChild(list);
+  host.appendChild(pane);
 }
 
 
@@ -32,10 +63,8 @@ export async function initGuidePage() {
   const guide = getGuideKey();
   const heading = shell.header.querySelector("#pageTitle");
   if (!guide) {
-    const introHost = document.createElement("div");
-    introHost.className = "intro-text";
-    introHost.id = "introHost";
-    introHost.innerHTML = MISSING_PARAM_HTML;
+    const introHost = buildGuideMessageHost();
+    renderMissingParamMessage(introHost);
     shell.contentHost.appendChild(introHost);
     if (heading) heading.textContent = BASE_TITLE;
     document.title = BASE_TITLE;
@@ -43,12 +72,11 @@ export async function initGuidePage() {
   }
   const guideIndex = await loadGuideIndex();
   const guideEntry = findGuideEntry(guideIndex, guide);
-  const guideConfig = guideEntry ? await loadGuide(guideEntry) : null;
+  const guideResult = guideEntry ? await loadGuideWithSource(guideEntry) : null;
+  const guideConfig = guideResult ? guideResult.guide : null;
   if (!guideConfig) {
-    const introHost = document.createElement("div");
-    introHost.className = "intro-text";
-    introHost.id = "introHost";
-    introHost.innerHTML = MISSING_GUIDE_HTML;
+    const introHost = buildGuideMessageHost();
+    introHost.appendChild(el("p", "", "Guide not found."));
     shell.contentHost.appendChild(introHost);
     if (heading) heading.textContent = titleCase(guide);
     document.title = titleCase(guide);
@@ -57,6 +85,13 @@ export async function initGuidePage() {
   const displayName = guideConfig.title || titleCase(guide);
   if (heading) heading.textContent = displayName;
   document.title = displayName;
+  const validationErrors = validateGuideData(guideConfig, {
+    sourceText: guideResult ? guideResult.sourceText : ""
+  });
+  if (validationErrors.length) {
+    renderValidationErrors(shell.contentHost, validationErrors);
+    return;
+  }
   const introPane = buildIntroPane({
     html: guideConfig.intro || "",
     className: "intro-text",

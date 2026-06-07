@@ -120,6 +120,25 @@ h1 {
     padding-left: 2rem;
 }
 
+.guide-validation-error {
+  max-width: 44rem;
+}
+
+.guide-validation-error p {
+  margin: 0 0 0.75rem;
+  color: var(--text);
+}
+
+.guide-validation-error-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--text);
+}
+
+.guide-validation-error-list li {
+  margin: 0.35rem 0;
+}
+
 /* =========================
    Pane Content: Decision Tree
    ========================= */
@@ -170,6 +189,18 @@ h1 {
 }
 
 .pane-host--decision-tree .btn-back:active {
+  filter: brightness(0.92);
+}
+
+.pane-host--decision-tree .btn-start-over {
+  background: var(--accent);
+}
+
+.pane-host--decision-tree .btn-start-over:hover {
+  filter: brightness(1.08);
+}
+
+.pane-host--decision-tree .btn-start-over:active {
   filter: brightness(0.92);
 }
 
@@ -232,6 +263,51 @@ h1 {
   padding: 0.5rem;
 }
 
+.pane-host--decision-tree-diagram .dt-diagram-error {
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--surface-pressed);
+  color: var(--text);
+  text-align: center;
+}
+
+.pane-host--decision-tree-print {
+  max-width: 80%;
+  margin-top: 1.25rem;
+}
+
+.pane-host--decision-tree-print .dt-print-title {
+  margin: 0 0 1rem;
+  color: var(--text-strong);
+  text-align: center;
+}
+
+.pane-host--decision-tree-print .dt-print-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.pane-host--decision-tree-print .dt-print-button {
+  min-width: 12rem;
+  min-height: 2.5rem;
+  background: var(--accent);
+}
+
+.pane-host--decision-tree-print .dt-print-error {
+  margin-top: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--surface-pressed);
+  color: var(--text);
+  text-align: center;
+}
+
+
+/* =========================
+   Mermaid Diagram Overrides
+   ========================= */
 .mermaid svg {
   font-family: system-ui, sans-serif !important;
 }
@@ -315,46 +391,6 @@ h1 {
   stroke: none !important;
 }
 
-.pane-host--decision-tree-diagram .dt-diagram-error {
-  padding: 0.75rem 0.9rem;
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  background: var(--surface-pressed);
-  color: var(--text);
-  text-align: center;
-}
-
-.pane-host--decision-tree-print {
-  max-width: 80%;
-  margin-top: 1.25rem;
-}
-
-.pane-host--decision-tree-print .dt-print-title {
-  margin: 0 0 1rem;
-  color: var(--text-strong);
-  text-align: center;
-}
-
-.pane-host--decision-tree-print .dt-print-actions {
-  display: flex;
-  justify-content: center;
-}
-
-.pane-host--decision-tree-print .dt-print-button {
-  min-width: 12rem;
-  min-height: 2.5rem;
-  background: var(--accent);
-}
-
-.pane-host--decision-tree-print .dt-print-error {
-  margin-top: 0.75rem;
-  padding: 0.75rem 0.9rem;
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  background: var(--surface-pressed);
-  color: var(--text);
-  text-align: center;
-}
 
 /* =========================
    Controls: Theme Toggle
@@ -429,7 +465,7 @@ button:hover { filter: brightness(1.08); }
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   border-radius: 0.75rem;
-  width: 95%;
+  width: 70%;
 }
 
 .nav .nav-links {
@@ -518,6 +554,12 @@ button:hover { filter: brightness(1.08); }
    Responsive
    ========================= */
 @media (max-width: 600px) {
+  .app {
+    width: 100%;
+    max-width: 100%;
+    padding: 0.5rem;
+  }
+
   .split {
     display: flex;
     flex-direction: column;
@@ -529,6 +571,35 @@ button:hover { filter: brightness(1.08); }
     padding: 0.75rem;
   }
 
+  .nav,
+  .intro-card-grid,
+  .pane-host--decision-tree,
+  .pane-host--decision-tree-diagram,
+  .pane-host--decision-tree-print,
+  .guide-validation-error {
+    width: 100%;
+    max-width: none;
+  }
+
+  .intro-card-grid {
+    gap: 0.875rem;
+    margin-top: 1rem;
+  }
+
+  .intro-card {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 0.75rem;
+  }
+
+  .intro-card h2 {
+    font-size: 1.2rem;
+  }
+
+  .pane-host--decision-tree .dt-body {
+    max-width: 100%;
+  }
+
   .pane-host--decision-tree .dt-actions {
     gap: 0.75rem;
   }
@@ -537,7 +608,4 @@ button:hover { filter: brightness(1.08); }
     width: 9rem;
     max-width: 100%;
   }
-
-  .app { padding: 0.5rem; }
-
 }

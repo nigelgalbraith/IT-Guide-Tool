@@ -3,12 +3,18 @@ const GUIDE_INDEX_URL = "data/guides.json";
 
 // BUILD
 /** Fetches JSON and raises a useful error for failed static loads */
-async function fetchJSON(url) {
+async function fetchText(url) {
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error("Unable to load " + url + " (" + response.status + ")");
   }
-  return response.json();
+  return response.text();
+}
+
+
+/** Fetches JSON and raises a useful error for failed static loads */
+async function fetchJSON(url) {
+  return JSON.parse(await fetchText(url));
 }
 
 
@@ -28,9 +34,20 @@ export function getGuidePath(entry) {
 
 /** Loads one guide JSON file from an index entry */
 export async function loadGuide(entry) {
+  const result = await loadGuideWithSource(entry);
+  return result ? result.guide : null;
+}
+
+
+/** Loads one guide JSON file with its raw source text */
+export async function loadGuideWithSource(entry) {
   const path = getGuidePath(entry);
   if (!path) return null;
-  return fetchJSON("data/" + path);
+  const sourceText = await fetchText("data/" + path);
+  return {
+    guide: JSON.parse(sourceText),
+    sourceText
+  };
 }
 
 

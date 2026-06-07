@@ -52,6 +52,7 @@
       "failNext": "contactIsp"
     },
     "contactIsp": {
+      "type": "terminal",
       "title": "Escalate/contact ISP",
       "body": [
         "Contact the internet provider with the troubleshooting already completed.",

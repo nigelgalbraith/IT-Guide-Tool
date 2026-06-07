@@ -13,7 +13,7 @@ export function el(tag, cls = "", text = "") {
 
 /** Clears a host element and returns it */
 export function clearHost(host) {
-  host.innerHTML = "";
+  host.replaceChildren();
   return host;
 }
 
