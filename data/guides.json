@@ -47,6 +47,22 @@
     {
       "id": "keyboardMouseNotWorking",
       "path": "guides/keyboardMouseNotWorking.json"
+    },
+    {
+      "id": "pcRandomlyRestarts",
+      "path": "guides/pcRandomlyRestarts.json"
+    },
+    {
+      "id": "blueScreenCrash",
+      "path": "guides/blueScreenCrash.json"
+    },
+    {
+      "id": "forgottenPassword",
+      "path": "guides/forgottenPassword.json"
+    },
+    {
+      "id": "fileRecovery",
+      "path": "guides/fileRecovery.json"
     }
   ]
 }
