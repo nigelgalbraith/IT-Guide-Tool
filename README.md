@@ -26,9 +26,11 @@ There is no backend, build step, framework, or package manager required. The app
 
 The included guides are:
 
-- `internet` - common Wi-Fi, Ethernet, router, device, and ISP connection problems
-- `email` - webmail, passwords, email app settings, mailbox storage, and provider issues
-- `printer` - printer power, connection, queue, supplies, driver, and support issues
+- `computerNoPower` - diagnose a desktop or laptop that does not power on
+- `computerNoDisplay` - diagnose a computer that powers on but shows no image
+- `computerSlow` - diagnose a computer that feels slow, delayed, or unresponsive
+- `noInternet` - diagnose devices that cannot access websites, online services, or cloud applications
+- `cannotPrint` - diagnose a printer that does not print when a job is sent
 
 Guide entries are registered in `data/guides.json`.
 
@@ -46,9 +48,31 @@ css/
 data/
 ├── guides.json
 └── guides/
-    ├── email.json
-    ├── internet.json
-    └── printer.json
+    ├── cannotPrint.json
+    ├── computerNoDisplay.json
+    ├── computerNoPower.json
+    ├── computerSlow.json
+    └── noInternet.json
+
+images/
+├── favicon/
+│   ├── optimized/
+│   │   ├── favicon.ico
+│   │   ├── favicon-16x16.png
+│   │   ├── favicon-32x32.png
+│   │   ├── favicon-48x48.png
+│   │   └── favicon-180x180.png
+│   └── original/
+│       └── guide.png
+└── icons/
+    ├── optimized/
+    │   ├── email.png
+    │   ├── github.png
+    │   └── linkedin.png
+    └── original/
+        ├── email.png
+        ├── github.png
+        └── linkedin.png
 
 js/
 ├── app.js
@@ -71,6 +95,7 @@ js/
 │   ├── DecisionTreeDiagramPane.js
 │   ├── DecisionTreePane.js
 │   ├── DecisionTreePrintPane.js
+│   ├── FooterPane.js
 │   ├── IntroCardPane.js
 │   └── IntroPane.js
 └── vendor/

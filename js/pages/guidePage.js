@@ -6,6 +6,7 @@ import { buildIntroPane } from "../panes/IntroPane.js";
 import { buildDecisionTreePane } from "../panes/DecisionTreePane.js";
 import { buildDecisionTreeDiagramPane } from "../panes/DecisionTreeDiagramPane.js";
 import { buildDecisionTreePrintPane } from "../panes/DecisionTreePrintPane.js";
+import { buildFooterPane } from "../panes/FooterPane.js";
 
 // STATE
 const BASE_TITLE = "IT How-To Guide";
@@ -52,6 +53,14 @@ function renderValidationErrors(host, errors) {
 }
 
 
+/** Appends the footer pane after the main page content */
+function appendFooter(shell, lifecycle) {
+  const footerPane = buildFooterPane();
+  shell.appRoot.appendChild(footerPane.node);
+  lifecycle.add(footerPane.destroy);
+}
+
+
 /** Initializes the guide page orchestrator */
 export async function initGuidePage() {
   const { lifecycle, shell, events, state } = createPageRuntime({
@@ -68,6 +77,7 @@ export async function initGuidePage() {
     shell.contentHost.appendChild(introHost);
     if (heading) heading.textContent = BASE_TITLE;
     document.title = BASE_TITLE;
+    appendFooter(shell, lifecycle);
     return;
   }
   const guideIndex = await loadGuideIndex();
@@ -80,6 +90,7 @@ export async function initGuidePage() {
     shell.contentHost.appendChild(introHost);
     if (heading) heading.textContent = titleCase(guide);
     document.title = titleCase(guide);
+    appendFooter(shell, lifecycle);
     return;
   }
   const displayName = guideConfig.title || titleCase(guide);
@@ -90,6 +101,7 @@ export async function initGuidePage() {
   });
   if (validationErrors.length) {
     renderValidationErrors(shell.contentHost, validationErrors);
+    appendFooter(shell, lifecycle);
     return;
   }
   const introPane = buildIntroPane({
@@ -116,6 +128,7 @@ export async function initGuidePage() {
   shell.contentHost.appendChild(decisionTreePane.node);
   shell.contentHost.appendChild(diagramPane.node);
   shell.contentHost.appendChild(printPane.node);
+  appendFooter(shell, lifecycle);
   lifecycle.add(introPane.destroy);
   lifecycle.add(decisionTreePane.destroy);
   lifecycle.add(diagramPane.destroy);

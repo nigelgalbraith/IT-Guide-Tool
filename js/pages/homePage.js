@@ -2,6 +2,7 @@ import { createPageRuntime } from "../core/pageRuntime.js";
 import { loadAllGuides } from "../core/guideData.js";
 import { buildIntroPane } from "../panes/IntroPane.js";
 import { buildIntroCardPane } from "../panes/IntroCardPane.js";
+import { buildFooterPane } from "../panes/FooterPane.js";
 
 // STATE
 const HOME_TITLE = "IT How-To Guide";
@@ -28,6 +29,9 @@ export async function initHomePage() {
   introSection.appendChild(introPane.node);
   introSection.appendChild(cardPane.node);
   shell.contentHost.appendChild(introSection);
+  const footerPane = buildFooterPane();
+  shell.appRoot.appendChild(footerPane.node);
   lifecycle.add(introPane.destroy);
   lifecycle.add(cardPane.destroy);
+  lifecycle.add(footerPane.destroy);
 }
